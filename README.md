@@ -5,12 +5,34 @@
 
 This repository contains the open source PHP SDK that allows you to access the Sameday Courier Platform from your PHP app. It was inspired by Facebook PHP-SDK.
 
+> **This fork** adds `countryCode` support to `SamedayGetCountiesRequest` and `SamedayGetCitiesRequest`, and increases the default `$countPerPage` from `50` to `500`. This allows users with a Romanian Sameday account to query geolocation data for other countries (e.g. Hungary) without switching API hosts. Maintained by [AltWeb](https://altweb.ro).
+
 ## Installation
 
 The Sameday PHP SDK can be installed with [Composer](https://getcomposer.org/). Run this command:
 
 ```bash
 $ composer require sameday-courier/php-sdk
+```
+
+To use **this fork** instead:
+
+```bash
+$ composer require altwebdesign/sameday-php-sdk
+```
+
+Or add it manually to your `composer.json`:
+
+```json
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/altwebdesign/sameday-php-sdk"
+    }
+],
+"require": {
+    "sameday-courier/php-sdk": "dev-master"
+}
 ```
 
 ## Usage
@@ -66,6 +88,121 @@ echo $pdf->getPdf();
 ```
 
 Complete documentation, installation instructions, and examples are available [here](docs/).
+
+---
+
+## Geolocation — Counties & Cities with `countryCode` Support
+
+> This feature is available in this fork: [altwebdesign/sameday-php-sdk](https://github.com/altwebdesign/sameday-php-sdk)
+
+By default the Sameday API returns Romanian counties and cities. This fork adds an optional `countryCode` parameter to both `SamedayGetCountiesRequest` and `SamedayGetCitiesRequest`, allowing you to fetch geolocation data for other supported countries (e.g. `'HU'` for Hungary) using your existing Romanian account credentials, without needing to switch to a different API host.
+
+### Get Counties (PHP)
+
+```php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$samedayClient = new \Sameday\SamedayClient('user', 'password');
+$sameday = new \Sameday\Sameday($samedayClient);
+
+// Get Romanian counties (default behaviour — countryCode omitted)
+$roCounties = $sameday->getCounties(new \Sameday\Requests\SamedayGetCountiesRequest(''));
+
+// Get Hungarian counties
+$huCounties = $sameday->getCounties(new \Sameday\Requests\SamedayGetCountiesRequest('', 'HU'));
+
+foreach ($huCounties->getCounties() as $county) {
+    echo $county->getId() . ' — ' . $county->getName() . PHP_EOL;
+}
+```
+
+### Get Cities by County (PHP)
+
+```php
+// Get cities for a Romanian county (default)
+$roCities = $sameday->getCities(new \Sameday\Requests\SamedayGetCitiesRequest($countyId));
+
+// Get cities for a Hungarian county
+// Constructor: ($countyId, $name, $postalCode, $countryCode)
+$huCities = $sameday->getCities(new \Sameday\Requests\SamedayGetCitiesRequest($countyId, '', null, 'HU'));
+
+foreach ($huCities->getCities() as $city) {
+    echo $city->getId() . ' — ' . $city->getName() . PHP_EOL;
+}
+```
+
+### Using Setters
+
+You can also set the country code after instantiation:
+
+```php
+$request = new \Sameday\Requests\SamedayGetCountiesRequest('');
+$request->setCountryCode('HU');
+
+$counties = $sameday->getCounties($request);
+```
+
+---
+
+## Laravel Examples
+
+### Setup
+
+```php
+use Sameday\Sameday;
+use Sameday\SamedayClient;
+use Sameday\Requests\SamedayGetCountiesRequest;
+use Sameday\Requests\SamedayGetCitiesRequest;
+
+$sameday = new Sameday(
+    new SamedayClient(
+        env('SAMEDAY_USER'),
+        env('SAMEDAY_PASSWORD')
+    )
+);
+```
+
+### Get Hungarian Counties (with Cache)
+
+```php
+public function getCounties()
+{
+    $data = \Cache::rememberForever('sameday_counties_hu', function () use ($sameday) {
+        $counties = $sameday->getCounties(new SamedayGetCountiesRequest('', 'HU'));
+        return json_decode($counties->getRawResponse()->getBody())->data;
+    });
+
+    return response()->json([
+        'success' => 1,
+        'counties' => $data,
+    ]);
+}
+```
+
+### Get Hungarian Cities by County (with Cache)
+
+```php
+public function getCities($countyId)
+{
+    $data = \Cache::rememberForever('sameday_hu_cities_' . $countyId, function () use ($sameday, $countyId) {
+        $cities = $sameday->getCities(new SamedayGetCitiesRequest($countyId, '', null, 'HU'));
+        return json_decode($cities->getRawResponse()->getBody())->data;
+    });
+
+    return response()->json([
+        'success' => 1,
+        'cities' => $data,
+    ]);
+}
+```
+
+> **Tip:** Results are cached forever (`rememberForever`) since county and city data rarely changes. Use a versioned cache key (e.g. `sameday_counties_hu_v2`) if you ever need to bust the cache manually.
+
+### Pagination Note
+
+This fork increases the default `$countPerPage` from `50` to `500` in `SamedayRequestPaginationTrait`. This ensures all cities in a county are returned in a single API call, which is important for countries like Hungary where some counties have more than 50 cities.
+
+---
 
 ## Tests
 
