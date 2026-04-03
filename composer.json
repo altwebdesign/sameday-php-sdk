@@ -1,13 +1,17 @@
 {
-    "name": "sameday-courier/php-sdk",
-    "description": "Sameday Courier SDK for PHP",
-    "keywords": ["sameday", "courier", "sdk"],
+    "name": "altwebdesign/sameday-php-sdk",
+    "description": "Sameday Courier SDK for PHP — fork with countryCode support for counties and cities geolocation",
+    "keywords": ["sameday", "courier", "sdk", "hungary", "geolocation"],
     "type": "library",
-    "homepage": "https://github.com/sameday-courier/php-sdk",
+    "homepage": "https://github.com/altwebdesign/sameday-php-sdk",
     "license": "MIT",
     "authors": [
         {
-            "name": "Sameday Courier",
+            "name": "AltWeb",
+            "homepage": "https://altweb.ro"
+        },
+        {
+            "name": "Sameday Courier (original)",
             "homepage": "https://github.com/sameday-courier/php-sdk/contributors"
         }
     ],

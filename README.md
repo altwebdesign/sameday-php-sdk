@@ -9,31 +9,14 @@ This repository contains the open source PHP SDK that allows you to access the S
 
 ## Installation
 
-The Sameday PHP SDK can be installed with [Composer](https://getcomposer.org/). Run this command:
+Install this fork with [Composer](https://getcomposer.org/):
 
 ```bash
-$ composer require sameday-courier/php-sdk
+composer require altwebdesign/sameday-php-sdk
 ```
 
-To use **this fork** instead:
+> This is a fork of [sameday-courier/php-sdk](https://github.com/sameday-courier/php-sdk) with added `countryCode` support. All original features are preserved.
 
-```bash
-$ composer require altwebdesign/sameday-php-sdk
-```
-
-Or add it manually to your `composer.json`:
-
-```json
-"repositories": [
-    {
-        "type": "vcs",
-        "url": "https://github.com/altwebdesign/sameday-php-sdk"
-    }
-],
-"require": {
-    "sameday-courier/php-sdk": "dev-master"
-}
-```
 
 ## Usage
 
