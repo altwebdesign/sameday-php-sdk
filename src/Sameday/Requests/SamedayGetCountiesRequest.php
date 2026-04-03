@@ -20,13 +20,20 @@ class SamedayGetCountiesRequest implements SamedayPaginatedRequestInterface
     protected $name;
 
     /**
+     * @var string|null
+     */
+    protected $countryCode;
+
+    /**
      * SamedayGetCountiesRequest constructor.
      *
      * @param string|null $name
+     * @param string|null $countryCode
      */
-    public function __construct($name)
+    public function __construct($name, $countryCode = null)
     {
         $this->name = $name;
+        $this->countryCode = $countryCode;
     }
 
     /**
@@ -41,6 +48,7 @@ class SamedayGetCountiesRequest implements SamedayPaginatedRequestInterface
             array_merge(
                 [
                     'name' => $this->name,
+                    'countryCode' => $this->countryCode,
                 ],
                 $this->buildPagination()
             )
@@ -63,6 +71,26 @@ class SamedayGetCountiesRequest implements SamedayPaginatedRequestInterface
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCountryCode()
+    {
+        return $this->countryCode;
+    }
+
+    /**
+     * @param string|null $countryCode
+     *
+     * @return $this
+     */
+    public function setCountryCode($countryCode)
+    {
+        $this->countryCode = $countryCode;
 
         return $this;
     }

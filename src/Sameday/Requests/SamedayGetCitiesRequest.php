@@ -30,17 +30,24 @@ class SamedayGetCitiesRequest implements SamedayPaginatedRequestInterface
     protected $postalCode;
 
     /**
+     * @var string|null
+     */
+    protected $countryCode;
+
+    /**
      * SamedayGetCitiesRequest constructor.
      *
      * @param int|null $countyId
      * @param string|null $name
      * @param string|null $postalCode
+     * @param string|null $countryCode
      */
-    public function __construct($countyId = null, $name = null, $postalCode = null)
+    public function __construct($countyId = null, $name = null, $postalCode = null, $countryCode = null)
     {
         $this->countyId = $countyId;
         $this->name = $name;
         $this->postalCode = $postalCode;
+        $this->countryCode = $countryCode;
     }
 
     /**
@@ -57,6 +64,7 @@ class SamedayGetCitiesRequest implements SamedayPaginatedRequestInterface
                     'county' => $this->countyId,
                     'name' => $this->name,
                     'postalCode' => $this->postalCode,
+                    'countryCode' => $this->countryCode,
                 ],
                 $this->buildPagination()
             )
@@ -119,6 +127,26 @@ class SamedayGetCitiesRequest implements SamedayPaginatedRequestInterface
     public function setPostalCode($postalCode)
     {
         $this->postalCode = $postalCode;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCountryCode()
+    {
+        return $this->countryCode;
+    }
+
+    /**
+     * @param string|null $countryCode
+     *
+     * @return $this
+     */
+    public function setCountryCode($countryCode)
+    {
+        $this->countryCode = $countryCode;
 
         return $this;
     }

@@ -17,7 +17,7 @@ trait SamedayRequestPaginationTrait
     /**
      * @var int Count of elements to request.
      */
-    protected $countPerPage = 50;
+    protected $countPerPage = 500;
 
     /**
      * @inheritdoc
